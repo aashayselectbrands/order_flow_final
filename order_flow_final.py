@@ -135,12 +135,12 @@ def main(month, year):
         print(f"No Order Flow data available for the entered month {month}. Please enter valid month.")
         return
     
-    # api_token, jwt  = authenticate_easyecom()
-    # start_date, end_date = get_start_end_dates(month, year)
-    # print("Getting shopify data for entered month.")
-    # df_raw = final_sales_df(api_token, jwt, start_date, end_date)
-    df_raw = pd.read_csv(f"csv files/minisales_{month_sheet_mapping[month]}_raw.csv")
-    # df_raw.to_csv(f"csv files/minisales_{month_sheet_mapping[month]}_raw.csv", index=False)
+    api_token, jwt  = authenticate_easyecom()
+    start_date, end_date = get_start_end_dates(month, year)
+    print("Getting shopify data for entered month.")
+    df_raw = final_sales_df(api_token, jwt, start_date, end_date)
+    # df_raw = pd.read_csv(f"csv files/minisales_{month_sheet_mapping[month]}_raw.csv")
+    df_raw.to_csv(f"csv files/minisales_{month_sheet_mapping[month]}_raw.csv", index=False)
     
     reship_df, replace_df = process_offline_data(df_raw)
     ms_df = process_offline_data_missing(df_raw)
