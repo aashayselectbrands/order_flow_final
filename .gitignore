@@ -1,0 +1,26 @@
+Raw data/
+minisales_oct_raw.csv
+minisales_nov_raw.csv
+minisales_jul_raw.csv
+minisales_jun_raw.csv
+minisales_aug_raw.csv
+minisales_may_raw.csv
+minisales_sept_raw.csv
+combined_order_flow.csv
+final_shipped_1.csv
+final_shipped.csv
+minisales_last_3_months_raw.csv
+mis_test_1.csv
+mis_nov.csv
+shipped_1.csv
+mis/
+csv files/
+Testing/
+Charges/
+Check daily shopify and EE orders/
+Tracking Pivots/
+client_secrets.json
+Credentials.json
+
+# Ignoring files in subdirectories
+Check daily shopify and EE orders/files/
