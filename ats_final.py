@@ -350,7 +350,7 @@ def main():
     if final_df_ats is not None: 
         final_ats_op = updating_primary_ats(df_primary, final_df_ats)
         final_ats_op.fillna("",inplace=True)
-        final_ats_op.to_csv("sample_ats_2.csv", index=False)
+        final_ats_op.to_csv("csv files/sample_ats_2.csv", index=False)
         print(f"Number of failed AWBs are: {len(failed_df)}")
 
         # Update Google Sheets

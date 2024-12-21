@@ -197,8 +197,8 @@ def main():
     start_date, end_date = get_start_end_dates()
     print("Getting shopify data.")
     df_raw = final_sales_df(api_token, jwt, start_date, end_date)
-    # df_raw = pd.read_csv(f"minisales_last_3_months_raw.csv")
-    df_raw.to_csv(f"minisales_last_3_months_raw.csv", index=False)
+    # df_raw = pd.read_csv(f"csv files/minisales_last_3_months_raw.csv")
+    df_raw.to_csv(f"csv files/minisales_last_3_months_raw.csv", index=False)
     
     folder_id = '1AIxxqpA_lhogQLYwodMUccF0tY-9d9tF'  
     file_name = 'combined_order_flow.csv'
@@ -207,7 +207,7 @@ def main():
     df_combined_of = read_csv_from_drive(drive, file_id)
 
     df_proc = process_easyecom_data(df_raw, df_combined_of)
-    df_proc.to_csv('processed_test.csv', index=False)
+    df_proc.to_csv('csv files/processed_test.csv', index=False)
 
     batch_date_dict = {}
     batch_id_list = list(set(df_proc['Batch ID'].dropna()))
@@ -244,7 +244,7 @@ def main():
 
     df_proc.fillna('', inplace=True)
 
-    df_proc.to_csv('batch_test_1.csv', index=False)
+    df_proc.to_csv('csv files/batch_test_1.csv', index=False)
 
     folder_id = '1V2CVlOYjj0osXzE55XKirZdVN2gELOOm'  
     file_name = 'batch_id_flow.csv'
@@ -260,7 +260,7 @@ def main():
         df_overall_updated = update_rs_rp(df_old, df_proc)
         print("Updated file shape:")
         print(df_overall_updated.shape)
-        overwrite_csv_on_drive(drive, file_id, df_overall_updated, 'batch_id_flow.csv')
+        overwrite_csv_on_drive(drive, file_id, df_overall_updated, 'csv files/batch_id_flow.csv')
     
     df_shipped = df_proc[df_proc['Tagging'] == 'Shipped']
     df_shipped_grpd = df_shipped.groupby(['Client Location','MP Name','Week','NEW_WH_NAME', 'NEW_MP_NAME','Batch ID', 'Order Date', 'Batch Date']).agg({
@@ -268,11 +268,11 @@ def main():
         'Order Number': pd.Series.nunique,
         'Suborder Quantity': 'sum'
         }).reset_index()
-    df_shipped_grpd.to_csv('batch_shipped_grouped.csv', index=False)
+    df_shipped_grpd.to_csv('csv files/batch_shipped_grouped.csv', index=False)
     print("df_shipped processed shape", df_shipped_grpd.shape)
 
     df_pending = df_proc[df_proc['Tagging'] != 'Shipped']
-    df_pending.to_csv('batch_pending.csv', index=False)
+    df_pending.to_csv('csv files/batch_pending.csv', index=False)
 
     # check_and_update(df_pending)
     # update_shipped(df_shipped_grpd)

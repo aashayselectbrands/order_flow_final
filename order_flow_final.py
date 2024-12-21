@@ -139,8 +139,8 @@ def main(month, year):
     # start_date, end_date = get_start_end_dates(month, year)
     # print("Getting shopify data for entered month.")
     # df_raw = final_sales_df(api_token, jwt, start_date, end_date)
-    df_raw = pd.read_csv(f"minisales_{month_sheet_mapping[month]}_raw.csv")
-    # df_raw.to_csv(f"minisales_{month_sheet_mapping[month]}_raw.csv", index=False)
+    df_raw = pd.read_csv(f"csv files/minisales_{month_sheet_mapping[month]}_raw.csv")
+    # df_raw.to_csv(f"csv files/minisales_{month_sheet_mapping[month]}_raw.csv", index=False)
     
     reship_df, replace_df = process_offline_data(df_raw)
     ms_df = process_offline_data_missing(df_raw)
@@ -338,7 +338,7 @@ def main(month, year):
 
     df_final.fillna("", inplace=True)
     df_final = df_final[~df_final['Suborder No'].str.contains('cancel', case=False, na=False)]
-    df_final.to_csv("ops_check.csv", index=False)
+    df_final.to_csv("csv files/ops_check.csv", index=False)
 
     df_final_ms = merge_dfs(ms_df,df_courier_concat)
     df_final_ms.fillna("", inplace=True)
@@ -364,7 +364,7 @@ def main(month, year):
 
     df_final_ms = update_rs_rp(df_ms, df_final_ms)
     df_final_ms = df_final_ms[~df_final_ms['Suborder No'].str.contains('cancel', case=False, na=False)]
-    df_final_ms.to_csv("ops_ms_check.csv", index=False)
+    df_final_ms.to_csv("csv files/ops_ms_check.csv", index=False)
 
     df_final_rs = merge_dfs(reship_df,df_courier_concat)
     df_final_rp = merge_dfs(replace_df,df_courier_concat)
@@ -414,8 +414,8 @@ def main(month, year):
     df_final_rp = update_rs_rp(df_rp, df_final_rp)
     df_final_rs = df_final_rs[~df_final_rs['Suborder No'].str.contains('cancel', case=False, na=False)]
     df_final_rp = df_final_rp[~df_final_rp['Suborder No'].str.contains('cancel', case=False, na=False)]
-    df_final_rs.to_csv("ops_rs_check.csv", index=False)
-    df_final_rp.to_csv("ops_rp_check.csv", index=False)
+    df_final_rs.to_csv("csv files/ops_rs_check.csv", index=False)
+    df_final_rp.to_csv("csv files/ops_rp_check.csv", index=False)
 
     df_final_corp = process_corp_data(df_raw)
     df_final_corp = merge_dfs(df_final_corp,df_courier_concat)
@@ -446,7 +446,7 @@ def main(month, year):
     df_corp_primary, ws_corp = get_data_from_google_sheets("Corporate_Order_Flow", "final_order_flow")
     df_final_corp = update_rs_rp(df_corp_primary, df_final_corp)
     df_final_corp = df_final_corp[~df_final_corp['Suborder No'].str.contains('cancel', case=False, na=False)]
-    df_final_corp.to_csv("ops_corp_check.csv", index=False)
+    df_final_corp.to_csv("csv files/ops_corp_check.csv", index=False)
 
     for column in df_final.select_dtypes(include=['object']):
         try:

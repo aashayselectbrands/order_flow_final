@@ -105,7 +105,7 @@ def main():
     final_df = updating_primary_bic(df_primary, bicree_new)
 
     final_df.fillna("", inplace=True)
-    final_df.to_csv("sample_bicree_2.csv", index=False)
+    final_df.to_csv("csv files/sample_bicree_2.csv", index=False)
 
     # Uploading the final ouptput to Google Sheet
     print("Clearing the existing data on Google Sheet")

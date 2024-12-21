@@ -292,7 +292,7 @@ def get_ee_df():
     # Round 'Selling Price' to 2 decimal places
     df['Selling Price'] = df['Selling Price'].round(2)
 
-    df.to_csv('past_30_days.csv', index=False)
+    df.to_csv('csv files/past_30_days.csv', index=False)
     df.fillna("", inplace=True)
 
     return df
@@ -479,14 +479,14 @@ async def main():
     # Run the async function to get AWB details
     new_df, failed_awbs = await get_awb_details(awb_nums_for_new, jwt)
 
-    new_df.to_csv('new_df_test_bd.csv',index=False)
+    new_df.to_csv('csv files/new_df_test_bd.csv',index=False)
 
     # new_df = pd.read_csv('new_df_test_bd.csv')
 
     # Update the primary DataFrame with new data
     final_bd_op = updating_primary_bluedart(df_primary, new_df)
 
-    final_bd_op.to_csv("sample_bd_2.csv", index=False)
+    final_bd_op.to_csv("csv files/sample_bd_2.csv", index=False)
     # print(f"Failed AWBs are: {failed_awbs}")
 
     final_bd_op.fillna("", inplace=True)

@@ -189,7 +189,7 @@ def main():
     df_final_merged = df_final_merged[['Date','Order ID','Suborder No','SKU','Tagging','Value','Product Taxable Value','Product Tax','Shipping Value','Shipping Tax', 'Shipping State','Warehouse','category_name','Plant','Pot','Color','units (units_cx_will_receive)','weight actual']]
 
     print('Saving final df to csv')
-    df_final_merged.to_csv('mis_1.csv', index=False)
+    df_final_merged.to_csv('csv files/mis_1.csv', index=False)
     print('All done!')
 
 if __name__ == "__main__":

@@ -118,7 +118,7 @@ def main():
     final_df = updating_primary_sr(sr_new, df_primary)
     final_df.fillna("", inplace=True)
     # Uploading the final ouptput to Google Sheet
-    final_df.to_csv("sr_upload.csv", index=False)
+    final_df.to_csv("csv files/sr_upload.csv", index=False)
     print("Clearing the existing data on Google Sheet")
     worksheet.clear()
     print("Uploading the updated data to Google Sheet")
