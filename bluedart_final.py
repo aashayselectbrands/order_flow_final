@@ -18,7 +18,7 @@ max_re = 3
 # Get Bluedart data till date from Google Sheets -----------------------
 
 # Your Google Sheets credentials file
-CREDENTIALS_FILE = 'credentials.json'
+CREDENTIALS_FILE = 'Creds.json'
 
 # Define the scope
 SCOPE = ['https://spreadsheets.google.com/feeds', 'https://www.googleapis.com/auth/drive']
@@ -292,7 +292,6 @@ def get_ee_df():
     # Round 'Selling Price' to 2 decimal places
     df['Selling Price'] = df['Selling Price'].round(2)
 
-    df.to_csv('csv files/past_30_days.csv', index=False)
     df.fillna("", inplace=True)
 
     return df

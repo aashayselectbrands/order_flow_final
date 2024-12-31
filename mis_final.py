@@ -73,9 +73,15 @@ def process(df, rs_flag=False):
         if rs_flag:
                 if row['final_status'] not in ['Cancelled', 'Not Shipped', 'Not Shipped (No Inventory)']:
                     if pd.isna(picked_up) or picked_up == "":
-                        new_df_update(manifested_at, order_no, suborder_no, sku, 'rs_cogs', row['RS_COGS'], "", "", "", "", state, warehouse)
+                        if pd.isna(manifested_at) or manifested_at == "":
+                            new_df_update("date_missing", order_no, suborder_no, sku, 'rs_shipped', sp, pd_taxable_value, pd_tax, shipping_value, shipping_tax, state, warehouse)
+                            new_df_update(manifested_at, order_no, suborder_no, sku, 'rs_cogs', row['RS_COGS'], "", "", "", "", state, warehouse)
+                        else:
+                            new_df_update(manifested_at, order_no, suborder_no, sku, 'rs_cogs', row['RS_COGS'], "", "", "", "", state, warehouse)
+                            new_df_update(manifested_at, order_no, suborder_no, sku, 'rs_shipped', sp, pd_taxable_value, pd_tax, shipping_value, shipping_tax, state, warehouse)
                     else:
                         new_df_update(picked_up, order_no, suborder_no, sku, 'rs_cogs', row['RS_COGS'], "", "", "", "", state, warehouse)
+                        new_df_update(picked_up, order_no, suborder_no, sku, 'rs_shipped', sp, pd_taxable_value, pd_tax, shipping_value, shipping_tax, state, warehouse)
         else:
             if final_status not in ['Not Shipped','Not Shipped (No Inventory)', 'Cancelled']:
                 new_df_update(date, order_no, suborder_no, sku, 'pd_cogs', row['pd_cost'], "", "", "", "", state, warehouse)
@@ -85,29 +91,45 @@ def process(df, rs_flag=False):
                 #     courier_charges_adjusted = pd.to_numeric(row['total_charges'])/no_of_tracking_nums
                 # else:
                 #     courier_charges_adjusted = row['total_charges']
+                if pd.isna(picked_up) or picked_up == "":
+                    if pd.isna(manifested_at) or manifested_at == "":
+                        new_df_update("date_missing", order_no, suborder_no, sku, 'shipped', sp, pd_taxable_value, pd_tax, shipping_value, shipping_tax, state, warehouse)
+                    else:
+                        new_df_update(manifested_at, order_no, suborder_no, sku, 'shipped', sp, pd_taxable_value, pd_tax, shipping_value, shipping_tax, state, warehouse)
+                else:
+                    new_df_update(picked_up, order_no, suborder_no, sku, 'shipped', sp, pd_taxable_value, pd_tax, shipping_value, shipping_tax, state, warehouse)
                 new_df_update(date, order_no, suborder_no, sku, 'courier_cogs', row['total_charges'], "", "", "", "", state, warehouse)
+
+def handle_rto_cancelled(row):
+    if row['final_status'] == "RTO" and row['Order Status'] == "Cancelled" and (row['pickup_date'] == "" or pd.isna(row['pickup_date'])):
+        return "Cancelled"
+    else:
+        # Return the original value for all other rows
+        return row['final_status']
 
 def main():
     print('Getting order flows for all the months!')
-    # df_apr, _ = get_data_from_google_sheets('apr_order_flow', 'final_order_flow')
-    # df_may, _ = get_data_from_google_sheets('may_order_flow', 'final_order_flow')
-    # df_jun, _ = get_data_from_google_sheets('jun_order_flow', 'final_order_flow')
-    # df_jul, _ = get_data_from_google_sheets('jul_order_flow', 'final_order_flow')
-    # df_aug, _ = get_data_from_google_sheets('aug_order_flow', 'final_order_flow')
-    # df_sept, _ = get_data_from_google_sheets('sept_order_flow', 'final_order_flow')
-    # df_oct, _ = get_data_from_google_sheets('oct_order_flow', 'final_order_flow')
-    # df_nov, _ = get_data_from_google_sheets('nov_order_flow', 'final_order_flow')
+    df_apr, _ = get_data_from_google_sheets('apr_order_flow', 'final_order_flow')
+    df_may, _ = get_data_from_google_sheets('may_order_flow', 'final_order_flow')
+    df_jun, _ = get_data_from_google_sheets('jun_order_flow', 'final_order_flow')
+    df_jul, _ = get_data_from_google_sheets('jul_order_flow', 'final_order_flow')
+    df_aug, _ = get_data_from_google_sheets('aug_order_flow', 'final_order_flow')
+    df_sept, _ = get_data_from_google_sheets('sept_order_flow', 'final_order_flow')
+    df_oct, _ = get_data_from_google_sheets('oct_order_flow', 'final_order_flow')
+    df_nov, _ = get_data_from_google_sheets('nov_order_flow', 'final_order_flow')
+    df_dec, _ = get_data_from_google_sheets('dec_order_flow', 'final_order_flow')
 
     print('Getting order flows for RS RP Orders!')
     df_rs, _ = get_data_from_google_sheets('RS Order Flow', 'rs_order_flow')
     df_rp, _ = get_data_from_google_sheets('RP Order Flow', 'rp_order_flow')
     df_ms, _ = get_data_from_google_sheets('MS Order Flow', 'ms_order_flow')
 
-    # df_list = [df_apr, df_may, df_jun, df_jul, df_aug, df_sept, df_oct, df_nov]
+    df_list = [df_apr, df_may, df_jun, df_jul, df_aug, df_sept, df_oct, df_nov, df_dec]
 
-    # print('Processing monthwise data')
-    # for df in df_list:
-    #     process(df)
+    print('Processing monthwise data')
+    for df in df_list:
+        df['final_status'] = df.apply(handle_rto_cancelled, axis=1)
+        process(df)
 
     print('Processing RS df')
     process(df_rs, True)
@@ -186,7 +208,7 @@ def main():
 
     df_final_merged = pd.merge(left=df_final, right=df_cat, left_on='SKU', right_on='sku', how='left')
 
-    df_final_merged = df_final_merged[['Date','Order ID','Suborder No','SKU','Tagging','Value','Product Taxable Value','Product Tax','Shipping Value','Shipping Tax', 'Shipping State','Warehouse','category_name','Plant','Pot','Color','units (units_cx_will_receive)','weight actual']]
+    df_final_merged = df_final_merged[['Date','Order ID','Suborder No','SKU','Tagging','Value','Product Taxable Value','Product Tax','Shipping Value','Shipping Tax', 'Shipping State','Warehouse','category_name','Plant','Pot','Color','units (units_cx_will_receive)','weight_actual_in_gms']]
 
     print('Saving final df to csv')
     df_final_merged.to_csv('csv files/mis_1.csv', index=False)

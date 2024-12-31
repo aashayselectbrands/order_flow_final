@@ -19,7 +19,7 @@ BASE_URL_EASYECOM = "https://api.easyecom.io"
 AUTH_EMAIL_EASYECOM = "dhruv.pahuja@selectbrands.in"
 AUTH_PASS_EASYECOM = "Analyst@123#"
 
-CREDENTIALS_FILE = 'credentials.json'
+CREDENTIALS_FILE = 'Creds.json'
 SCOPE = ['https://spreadsheets.google.com/feeds', 'https://www.googleapis.com/auth/drive']
 
 def final_status(row):  
@@ -149,8 +149,16 @@ def main(month, year):
     df_bicree, _ = get_data_from_google_sheets("Bicree Order Flow", "Till_date_data")
     df_bd, _ = get_data_from_google_sheets("Bluedart Order Flow", "Till_date_data")
     df_ats, _ = get_data_from_google_sheets("ATS Order Flow", "Till_date_data")
+    df_del, _ = get_data_from_google_sheets("Delhivery Order Flow", "Till_date_data")
 
     selected_cols = ['awb_no','status','pickup_date','delivered_date','rto_initiation_date','rto_delivered_date','mapped_status','updated_at','cod_charges','total_charges']
+
+    df_del.rename(columns={
+        'awb_number': 'awb_no',
+        'delivery_date': 'delivered_date'
+    }, inplace=True)
+    df_del.insert(len(df_del.columns),'cod_charges', '')
+    df_del = df_del[selected_cols]
 
     df_sr.rename(columns={
     'AWB Code': 'awb_no',
@@ -199,7 +207,7 @@ def main(month, year):
 
     df_shopify, _ = get_data_from_google_sheets("shopify_order_wise shipping_discount", "SHOPIFY_DATA")
     df_shopify = df_shopify[['Order ID', 'Shipping']]
-    df_courier_concat = pd.concat([df_sr, df_bicree, df_bd, df_ats])
+    df_courier_concat = pd.concat([df_sr, df_bicree, df_bd, df_ats, df_del])
     df_final = merge_dfs(df_order_flow,df_courier_concat)
     df_pd_cost_1, _ = get_data_from_google_sheets("cost_automated", "bundle_sku_cost")
     df_pd_cost_2, _ = get_data_from_google_sheets("cost_automated", "single_sku_cost")

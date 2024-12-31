@@ -11,7 +11,7 @@ BASE_URL_EASYECOM = "https://api.easyecom.io"
 AUTH_EMAIL_EASYECOM = "dhruv.pahuja@selectbrands.in"
 AUTH_PASS_EASYECOM = "Analyst@123#"
 
-CREDENTIALS_FILE = 'credentials.json'
+CREDENTIALS_FILE = 'Creds.json'
 SCOPE = ['https://spreadsheets.google.com/feeds', 'https://www.googleapis.com/auth/drive']
 
 def process_easyecom_data(raw_df, df_combined_of):
@@ -25,7 +25,7 @@ def process_easyecom_data(raw_df, df_combined_of):
     df_concat.rename(columns={
         'Suborder No': 'Sub No'
     }, inplace=True)
-    df_concat.to_csv('batch_concat.csv', index=False)
+    df_concat.to_csv('csv files/batch_concat.csv', index=False)
     # df_concat = df_concat.set_index('Suborder No')
 
     raw_df.loc[:, "Order Number"] = raw_df.loc[:, "Order Number"].str.replace("`", "")
@@ -70,9 +70,9 @@ def process_easyecom_data(raw_df, df_combined_of):
     raw_df['NEW_MP_NAME'] = raw_df.apply(NEW_MP_NAME_name, axis=1)
     raw_df = pd.merge(left=raw_df, right=df_concat, left_on='Suborder No', right_on='Sub No', how='left')
 
-    raw_df.to_csv('batch_raw_df.csv', index=False)
+    raw_df.to_csv('csv files/batch_raw_df.csv', index=False)
 
-    raw_df = raw_df[["Batch ID", "Order Date", "Suborder No","MP Name", "Client Location", "Order Number", "SKU", "Suborder Quantity",'Order Status', 'final_status', 'Shipping Status', "Shipping Status new", "Cancelled Status", "Delivered",'Selling Price', 'Message', 'Shipping City', 'Shipping Zip Code', 'Payment Mode','Shipping Customer Name','Mobile No', 'NEW_MP_NAME']]
+    raw_df = raw_df[["Batch ID", "Order Date", "Suborder No","MP Name", "Client Location", "Order Number", "SKU", "Suborder Quantity",'Order Status', 'final_status', 'Courier Aggregator Name', 'Tracking Number', 'Shipping Status', "Shipping Status new", "Cancelled Status", "Delivered",'Selling Price', 'Message', 'Shipping City', 'Shipping Zip Code', 'Payment Mode','Shipping Customer Name','Mobile No', 'NEW_MP_NAME']]
     
     return raw_df
 
@@ -199,13 +199,15 @@ def main():
     df_raw = final_sales_df(api_token, jwt, start_date, end_date)
     # df_raw = pd.read_csv(f"csv files/minisales_last_3_months_raw.csv")
     df_raw.to_csv(f"csv files/minisales_last_3_months_raw.csv", index=False)
-    
+
+    print("Getting the combined order flow from drive.")
     folder_id = '1AIxxqpA_lhogQLYwodMUccF0tY-9d9tF'  
     file_name = 'combined_order_flow.csv'
     drive = authenticate_drive()
     file_id = get_file_id_by_name(drive, folder_id, file_name)
     df_combined_of = read_csv_from_drive(drive, file_id)
 
+    print("Processing easyecom data.")
     df_proc = process_easyecom_data(df_raw, df_combined_of)
     df_proc.to_csv('csv files/processed_test.csv', index=False)
 
@@ -233,7 +235,7 @@ def main():
 
     df_proc['NEW_WH_NAME'] = df_proc.apply(warehouse_name, axis=1)
 
-    df_proc = df_proc[['Client Location', 'MP Name','Tagging','Week','days_diff','NEW_WH_NAME','NEW_MP_NAME','Batch ID','Batch Date','Order Date','Order Number','Suborder No','Order Status','final_status','Payment Mode','Message','SKU','Suborder Quantity','Selling Price','Shipping Zip Code','Shipping City','Shipping Customer Name','Mobile No']]
+    df_proc = df_proc[['Client Location', 'MP Name','Tagging','Week','days_diff','NEW_WH_NAME','NEW_MP_NAME','Batch ID','Batch Date','Order Date','Order Number','Suborder No','Order Status','final_status','Courier Aggregator Name', 'Tracking Number', 'Payment Mode','Message','SKU','Suborder Quantity','Selling Price','Shipping Zip Code','Shipping City','Shipping Customer Name','Mobile No']]
 
     df_proc['Batch ID'] = pd.to_numeric(df_proc['Batch ID'], errors='coerce')
     df_proc['Batch Date'] = pd.to_datetime(df_proc['Batch Date'], dayfirst=True).dt.date
@@ -277,7 +279,7 @@ def main():
     # check_and_update(df_pending)
     # update_shipped(df_shipped_grpd)
     _, ws_batch = get_data_from_google_sheets('batch_daily_clear_action', 'batch_data_daily')
-    ws_batch.batch_clear(['A:W'])
+    ws_batch.batch_clear(['A:Y'])
     set_with_dataframe(worksheet=ws_batch, dataframe=df_pending, include_index=False, include_column_header=True, row=1, col=1)
     _, ws_shipped = get_data_from_google_sheets('batch_daily_clear_action', 'batch_data_shipped')
     ws_shipped.clear()

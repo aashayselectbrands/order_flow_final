@@ -10,7 +10,7 @@ import io
 import gspread as gs
 from oauth2client.service_account import ServiceAccountCredentials
 
-CREDENTIALS_FILE = 'credentials.json'
+CREDENTIALS_FILE = 'Creds.json'
 SCOPE = ['https://spreadsheets.google.com/feeds', 'https://www.googleapis.com/auth/drive']
 SHEET_NAME = "Scripts Update"
 WORKSHEET_NAME = "updates"

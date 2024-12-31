@@ -18,7 +18,7 @@ max_retries = 3
 max_re = 3
 
 # Your Google Sheets credentials file
-CREDENTIALS_FILE = 'credentials.json'
+CREDENTIALS_FILE = 'Creds.json'
 
 # Define the scope
 SCOPE = ['https://spreadsheets.google.com/feeds', 'https://www.googleapis.com/auth/drive']

@@ -14,7 +14,7 @@ BASE_URL_EASYECOM = "https://api.easyecom.io"
 AUTH_EMAIL_EASYECOM = "dhruv.pahuja@selectbrands.in"
 AUTH_PASS_EASYECOM = "Analyst@123#"
 
-CREDENTIALS_FILE = 'credentials.json'
+CREDENTIALS_FILE = 'Creds.json'
 SCOPE = ['https://spreadsheets.google.com/feeds', 'https://www.googleapis.com/auth/drive']
 
 def authenticate_easyecom():
@@ -123,7 +123,7 @@ def process_easyecom_data(raw_df, corp=False, shopify=True):
     raw_df.loc[:, "Order Number"] = raw_df.loc[:, "Order Number"].str.replace("`", "")
     raw_df.loc[:, "Tracking Number"] = raw_df.loc[:, "Tracking Number"].str.replace("`", "")
 
-    # basic column and type cheange  
+    # basic column and type change  
     raw_df["combine_id"] = raw_df["Order Number"] + "_" + raw_df["SKU"]
     raw_df["combine_id_mp"] = raw_df["Order Number"] + "_" + raw_df["Marketplace Sku"]
     raw_df["pickup_canceled"] = ""	

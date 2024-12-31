@@ -9,9 +9,9 @@ import gspread as gs
 from oauth2client.service_account import ServiceAccountCredentials
 from Functions.Script_updates import update_script_date
 
-CREDENTIALS_FILE = 'credentials.json'
+CREDENTIALS_FILE = 'Creds.json'
 SCOPE = ['https://spreadsheets.google.com/feeds', 'https://www.googleapis.com/auth/drive']
-RAW_FILE_PATH = r"Raw data\Bicree\Bicree_90_days_till_21_dec.csv"
+RAW_FILE_PATH = r"Raw data\Bicree\Bicree_90_days_till_31_dec.csv"
 
 # Function to authenticate with Google Sheets API
 def authenticate_google_sheets():

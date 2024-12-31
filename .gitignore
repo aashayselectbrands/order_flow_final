@@ -21,6 +21,7 @@ Check daily shopify and EE orders/
 Tracking Pivots/
 client_secrets.json
 Credentials.json
-
+Creds.json
+.env
 # Ignoring files in subdirectories
 Check daily shopify and EE orders/files/

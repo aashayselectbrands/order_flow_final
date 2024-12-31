@@ -3,10 +3,38 @@ from pydrive.drive import GoogleDrive
 import pandas as pd
 import os
 
+# def authenticate_drive():
+#     """Authenticates the user and returns a GoogleDrive object."""
+#     gauth = GoogleAuth()
+#     gauth.LocalWebserverAuth()  # Creates local webserver and auto handles authentication
+#     return GoogleDrive(gauth)
+
 def authenticate_drive():
-    """Authenticates the user and returns a GoogleDrive object."""
+    """
+    Authenticates the user via OAuth, caching tokens locally so
+    you won't be prompted to login again (unless tokens expire).
+    """
     gauth = GoogleAuth()
-    gauth.LocalWebserverAuth()  # Creates local webserver and auto handles authentication
+
+    # Optional: specify your client secrets file if not named client_secrets.json
+    gauth.settings['client_config_file'] = 'client_secrets.json'
+
+    # Try loading saved client credentials
+    gauth.LoadCredentialsFile("credentials.json")
+
+    if gauth.credentials is None:
+        # Authenticate if they're not there
+        gauth.LocalWebserverAuth()
+        # Save the credentials for the next run
+        gauth.SaveCredentialsFile("credentials.json")
+    elif gauth.access_token_expired:
+        # Refresh them if expired
+        gauth.Refresh()
+        gauth.SaveCredentialsFile("credentials.json")
+    else:
+        # Initialize the saved creds
+        gauth.Authorize()
+
     return GoogleDrive(gauth)
 
 def get_file_id_by_name(drive, folder_id, file_name):
@@ -83,7 +111,7 @@ if __name__ == "__main__":
     folder_id = '1zbZyKzAwn3yKSCWI4VwxRhmdI439kLyp'  # Replace with your folder's ID
     drive = authenticate_drive()
     
-    # List all CSV files in the folder
+    # # List all CSV files in the folder
     # csv_files = list_csv_files(drive, folder_id)
     # if not csv_files:
     #     print("No CSV files found in the folder.")
@@ -104,7 +132,7 @@ if __name__ == "__main__":
     #         print(df)
     
     # Upload a CSV file to the Google Drive folder
-    try:
-        upload_csv_to_drive(drive, folder_id, 'RP Order Flow - rp_order_flow.csv')
-    except FileNotFoundError as e:
-        print(e)
+    # try:
+    #     upload_csv_to_drive(drive, folder_id, 'RP Order Flow - rp_order_flow.csv')
+    # except FileNotFoundError as e:
+    #     print(e)

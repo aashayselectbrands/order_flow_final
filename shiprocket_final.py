@@ -10,9 +10,9 @@ from oauth2client.service_account import ServiceAccountCredentials
 from Functions.Script_updates import update_script_date
 
 # Constants
-CREDENTIALS_FILE = 'credentials.json'
+CREDENTIALS_FILE = 'Creds.json'
 SCOPE = ['https://spreadsheets.google.com/feeds', 'https://www.googleapis.com/auth/drive']
-RAW_FILE_PATH = r"Raw data\shiprocket\sr_2_ac.csv"
+RAW_FILE_PATH = r"Raw data\shiprocket\Shiprocket_01_oct_31_dec.csv"
 
 # Function to authenticate with Google Sheets API
 def authenticate_google_sheets():
